@@ -7,6 +7,7 @@ public abstract class BasicProgressFuture<V> implements ProgressFuture<V>{
 	public static interface ThreadCreator {
 		public void runAsync(Runnable run);
 	}
+	
 	public static ThreadCreator ASYNC_RUNNER = new ThreadCreator() {
 		@Override
 		public void runAsync(Runnable run) {

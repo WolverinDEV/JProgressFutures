@@ -22,4 +22,8 @@ public interface ProgressFuture<V> {
 	public void get(TimedAsyncCallback<V> task, int timeout, TimeUnit unit);
 	
 	public boolean isDone();
+	
+	public boolean isSuccessful();
+	public Exception getException();
+	
 }

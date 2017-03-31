@@ -60,4 +60,14 @@ public abstract class TransformProgressFuture<I, O> implements ProgressFuture<O>
 	public boolean isDone() {
 		return handle.isDone();
 	}
+
+	@Override
+	public boolean isSuccessful() {
+		return handle.isSuccessful();
+	}
+
+	@Override
+	public Exception getException() {
+		return handle.getException();
+	}
 }
