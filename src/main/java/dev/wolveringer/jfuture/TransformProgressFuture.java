@@ -2,15 +2,29 @@ package dev.wolveringer.jfuture;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-public abstract class TransformProgressFuture<I, O> implements ProgressFuture<O>{
+public class TransformProgressFuture<I, O> implements ProgressFuture<O>{
 	private final @NonNull ProgressFuture<I> handle;
+	private final Function<I, O> transformer;
 
-	protected abstract O transform(I in);
+	public TransformProgressFuture(ProgressFuture<I> handle) {
+		this(handle, null);
+	}
+	
+	public TransformProgressFuture(@NonNull ProgressFuture<I> handle, Function<I, O> transformer) {
+		this.handle = handle;
+		this.transformer = transformer;
+	}
+	
+	protected O transform(I in){
+		return transformer.apply(in);
+	}
 	
 	@Override
 	public O get() {

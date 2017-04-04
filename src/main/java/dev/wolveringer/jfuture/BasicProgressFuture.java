@@ -8,11 +8,8 @@ public abstract class BasicProgressFuture<V> implements ProgressFuture<V>{
 		public void runAsync(Runnable run);
 	}
 	
-	public static ThreadCreator ASYNC_RUNNER = new ThreadCreator() {
-		@Override
-		public void runAsync(Runnable run) {
-			new Thread(run).start();
-		}
+	public static ThreadCreator ASYNC_RUNNER = (run) -> {
+		new Thread(run).start();
 	};
 	
 	@Override
@@ -32,6 +29,8 @@ public abstract class BasicProgressFuture<V> implements ProgressFuture<V>{
 			} catch (Exception e) {
 				ex = e;
 			}
+			if(ex == null) ex = getException();
+			
 			task.done(obj, ex, System.currentTimeMillis() - start);
 		});
 	}
@@ -53,6 +52,8 @@ public abstract class BasicProgressFuture<V> implements ProgressFuture<V>{
 			} catch (Exception e) {
 				ex = e;
 			}
+			if(ex == null) ex = getException();
+			
 			task.done(obj, ex, System.currentTimeMillis() - start);
 		});
 	}

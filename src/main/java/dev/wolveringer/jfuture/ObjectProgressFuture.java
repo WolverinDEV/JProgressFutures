@@ -12,7 +12,7 @@ public class ObjectProgressFuture<V> extends BasicProgressFuture<V> {
 	
 	@Override
 	public boolean isSuccessful() {
-		return exception == null;
+		return isDone() && exception == null;
 	}
 	
 	@Override

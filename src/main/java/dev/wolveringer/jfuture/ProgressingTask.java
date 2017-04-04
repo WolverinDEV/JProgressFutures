@@ -7,7 +7,7 @@ public abstract class ProgressingTask<ReturnType> extends ObjectProgressFuture<R
 	private boolean running = false;
 	private Thread thandle;
 	
-	public synchronized ProgressingTask<ReturnType> execurteTask(){
+	public final synchronized ProgressingTask<ReturnType> execurteTask(){
 		if(running || isDone()) return this;
 		running = true;
 		thandle = new Thread(()->{
@@ -24,4 +24,9 @@ public abstract class ProgressingTask<ReturnType> extends ObjectProgressFuture<R
 	} 
 	
 	protected abstract ReturnType execute();
+	
+	public ProgressingTask<ReturnType> waitFor() throws InterruptedException{
+		while(running) Thread.sleep(10);
+		return this;
+	}
 }
