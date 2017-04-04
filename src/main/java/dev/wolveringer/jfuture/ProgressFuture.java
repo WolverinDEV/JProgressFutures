@@ -1,9 +1,43 @@
 package dev.wolveringer.jfuture;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import lombok.RequiredArgsConstructor;
+
 public interface ProgressFuture<V> {
+	@RequiredArgsConstructor
+	static class ProgressFutureJavaImpl<V> implements Future<V> {
+		protected final ProgressFuture<V> handle;
+		
+		@Override
+		public boolean cancel(boolean mayInterruptIfRunning) { return false; }
+
+		@Override
+		public boolean isCancelled() { return false; }
+
+		@Override
+		public boolean isDone() {
+			return handle.isDone();
+		}
+
+		@Override
+		public V get() throws InterruptedException, ExecutionException {
+			V ret = handle.get();
+			if(!handle.isSuccessful()) throw new ExecutionException(handle.getException());
+			return ret;
+		}
+
+		@Override
+		public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+			V ret = handle.get((int) timeout, unit);
+			if(!handle.isSuccessful()) throw new ExecutionException(handle.getException());
+			return ret;
+		}
+	}
+	
 	public static interface AsyncCallback<T> {
 		public void done(T obj, Exception e);
 	}
@@ -25,5 +59,9 @@ public interface ProgressFuture<V> {
 	
 	public boolean isSuccessful();
 	public Exception getException();
+	
+	public default Future<V> asJavaFuture(){
+		return new ProgressFutureJavaImpl<V>(this);
+	}
 	
 }
