@@ -1,11 +1,14 @@
 package dev.wolveringer.jfuture;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.Future;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-public abstract class ProgressingTask<ReturnType> extends ObjectProgressFuture<ReturnType> {
+@RequiredArgsConstructor
+public class ProgressingTask<ReturnType> extends ObjectProgressFuture<ReturnType> {
 	@Getter 
 	private boolean running = false;
 	@Getter
@@ -28,7 +31,15 @@ public abstract class ProgressingTask<ReturnType> extends ObjectProgressFuture<R
 		return this;
 	} 
 	
-	protected abstract ReturnType execute();
+	public ProgressingTask(){
+		call = null;
+	}
+	
+	private final Callable<ReturnType> call;
+	protected ReturnType execute() throws Exception{
+		if(call == null) throw new UnsupportedOperationException();
+		return call.call();
+	}
 	
 	public ProgressingTask<ReturnType> waitFor() throws InterruptedException{
 		while(running) Thread.sleep(10);
