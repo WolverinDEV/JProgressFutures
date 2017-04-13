@@ -64,4 +64,17 @@ public interface ProgressFuture<V> {
 		return new ProgressFutureJavaImpl<V>(this);
 	}
 	
+	public default void throwErrors() throws Exception {
+		throwErrors(new Exception());
+	}
+	
+	public default void throwErrors(Exception _default) throws Exception {
+		if(!isDone()) return;
+		if(isSuccessful()) return;
+		
+		Exception ex = getException();
+		if(ex == null) throw _default;
+		else throw ex;
+	}
+	
 }
